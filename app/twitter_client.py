@@ -25,7 +25,13 @@ class TwitterService:
         self.email = email
         self.password = password
         self.cookies_file = cookies_file
-        self.client = Client('zh-CN')  # 支持中文界面
+
+        # 创建带有更真实浏览器头的Client
+        self.client = Client(
+            language='zh-CN',
+            # 添加更真实的请求头来避免403错误
+            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        )
         self._authenticated = False
 
     async def authenticate(self) -> bool:
@@ -48,6 +54,10 @@ class TwitterService:
 
             # cookies无效或不存在，执行完整登录
             logger.info("开始执行Twitter账号登录")
+
+            # 添加延迟避免速率限制
+            await asyncio.sleep(2)
+
             await self.client.login(
                 auth_info_1=self.username,
                 auth_info_2=self.email,
@@ -64,6 +74,15 @@ class TwitterService:
 
         except Exception as e:
             logger.error(f"Twitter认证失败: {e}")
+
+            # 如果是403错误，给出更具体的建议
+            if "403" in str(e) or "Forbidden" in str(e):
+                logger.error("收到403 Forbidden错误 - 可能的原因:")
+                logger.error("1. IP地址被Twitter限制访问")
+                logger.error("2. 账号需要额外的安全验证")
+                logger.error("3. 地理位置限制，可能需要代理")
+                logger.error("4. 请求过于频繁，建议稍后重试")
+
             raise TwitterClientError(f"认证失败: {str(e)}")
 
     async def _test_authentication(self):
