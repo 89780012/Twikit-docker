@@ -1,0 +1,75 @@
+# Docker忽略文件
+
+# Python缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 虚拟环境
+venv/
+env/
+ENV/
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 环境变量文件
+.env
+.env.local
+.env.production
+
+# 日志文件
+logs/
+*.log
+
+# 数据库文件
+*.db
+*.sqlite
+
+# 临时文件
+.tmp/
+temp/
+
+# Git文件
+.git/
+.gitignore
+
+# Docker文件
+.dockerignore
+
+# 测试覆盖率
+.coverage
+htmlcov/
+
+# macOS文件
+.DS_Store
+
+# Windows文件
+Thumbs.db
+ehthumbs.db
+
+# 项目特定文件
+data/
+.claude/

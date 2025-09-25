@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  twikit-service:
+    build: .
+    container_name: twikit-http-service
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      # Twitter账号配置 (必须设置)
+      - TWITTER_USERNAME=${TWITTER_USERNAME}
+      - TWITTER_EMAIL=${TWITTER_EMAIL}
+      - TWITTER_PASSWORD=${TWITTER_PASSWORD}
+
+      # 服务配置
+      - HOST=0.0.0.0
+      - PORT=8000
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+      # 重试配置
+      - MAX_RETRY_ATTEMPTS=${MAX_RETRY_ATTEMPTS:-3}
+      - RETRY_DELAY=${RETRY_DELAY:-2}
+
+    # volumes:
+    #   # 数据持久化
+    #   - ./data:/app/data
+
+    #   # 日志持久化 (可选)
+    #   - ./logs:/app/logs
+
+    networks:
+      - twikit-network
+
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  twikit-network:
+    driver: bridge
+
+# 可选：如果需要数据库持久化卷
+volumes:
+  twikit-data:
+    driver: local
